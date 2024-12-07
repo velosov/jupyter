@@ -1,0 +1,34 @@
+version: '3'
+
+services:
+  jupyter:
+    container_name: jupyter
+    # command: "start-notebook.sh --NotebookApp.token="
+    # command: "start-notebook.sh --NotebookApp.iopub_data_rate_limit=1.0e10 --NotebookApp.token="
+    command: "jupyter lab --allow-root --NotebookApp.iopub_data_rate_limit=1.0e10 --NotebookApp.token="
+    build: .
+    env_file:
+      - .env
+    ports: 
+      - "8888:8888"
+    environment: 
+      - JUPYTER_ENABLE_LAB=yes
+      - JUPYTER_TOKEN=token
+      - NB_USER=jovyan
+      - NB_UID=1000
+      - NB_GID=100
+      - CHOWN_HOME=yes
+      - CHOWN_HOME_OPTS=-R
+    tty: true
+    user: root
+    volumes: 
+      - ../python/jupyter:/home/jovyan/work
+    working_dir: /home/jovyan/work
+volumes:
+  nodemodules: {}
+  db_data:
+    driver: local # Define the driver and options under the volume name
+    driver_opts:
+      type: none
+      device: ./db/data/
+      o: uid=1000
